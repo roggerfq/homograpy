@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Homography Point Mapping</title>
+<style>
+  body { display: flex; flex-wrap: wrap; gap: 10px; }
+  .image-container { position: relative; display: inline-block; }
+  canvas { border: 1px solid #ccc; }
+</style>
+</head>
+<body>
+
+<div class="image-container"><canvas id="img0"></canvas></div>
+<div class="image-container"><canvas id="img1"></canvas></div>
+<div class="image-container"><canvas id="img2"></canvas></div>
+<div class="image-container"><canvas id="img3"></canvas></div>
+<div class="image-container"><canvas id="img4"></canvas></div>
+<div class="image-container"><canvas id="img5"></canvas></div>
+
+<script>
+const imageFiles = ['a1.png','a2.png','b1.png','b2.png','c1.png','c2.png'];
+const canvases = [];
+const ctxs = [];
+const images = [];
+const width = 400;  // set your desired width
+const height = 300; // set your desired height
+
+// Identity homographies for all images (6 images × 5 matrices each)
+const homographies = [];
+for(let i=0;i<6;i++){
+  homographies[i] = [];
+  for(let j=0;j<6;j++){
+    // Identity 3x3
+    //homographies[i][j] = [[1,0,0],[0,1,0],[0,0,1]];
+	homographies[i][j] = [[0,0,0],[0,0,0],[0,0,0]];
+  }
+}
+
+//a2 -> c1
+homographies[1][4] = [
+  [0.685968515, -1.56422282, 415.916927],
+  [0.539302501, -0.857944859, 191.540904],
+  [0.00160112436, -0.00368966303, 1.0]
+];
+
+homographies[2][3] = [
+  [0.707904802, -0.724605746, 172.8203],
+  [-0.0641237572, -0.19440425, 234.010254],
+  [0.00037082583, -0.00228554609, 1.0]
+];
+
+
+homographies[1][3] = [
+  [0.136213714, -0.0503022308, 145.904283],
+  [-0.335628347, 0.533638317, 135.354472],
+  [-0.00130266063, -0.000143906141, 1.0]
+];
+
+homographies[5][2] = [
+  [4.29036336, 3.67603221, -1198.87792],
+  [-0.940038393, 4.35808104, 37.2687044],
+  [0.00419649657, 0.00436019403, 1.0]
+];
+
+
+homographies[0][4] = [
+  [1.48493378, 0.612105771, -244.925602],
+  [-0.50087635, 0.823744432, 232.521231],
+  [0.00132928795, -0.00044763345, 1.0]
+];
+
+
+homographies[0][2] = [
+  [-0.433470939, -1.26611152, 432.414429],
+  [-0.247766354, -0.909709111, 321.91791],
+  [-0.000846470338, -0.00296330349, 1.0]
+];
+
+
+
+//___________________________________________________________________________________
+
+/*
+//a1 -> a2
+homographies[0][1] = [
+  [0.638273, 1.251347, -252.312],
+  [0.258716, 0.293459, -67.422],
+  [0.001175, 0.000822, 0.998754]
+];
+
+//a1 -> b2
+homographies[0][3] = [
+  [0.884743, -0.147589, 563.289],
+  [0.098742, -0.102615, 487.129],
+  [-0.000228, -0.005943, 0.991742]
+];
+
+*/
+
+
+// Load images and set up canvases
+for(let i=0;i<6;i++){
+  const canvas = document.getElementById('img'+i);
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  canvases.push(canvas);
+  ctxs.push(ctx);
+
+  const img = new Image();
+  img.src = imageFiles[i];
+  img.onload = () => ctx.drawImage(img,0,0,width,height);
+  images.push(img);
+}
+
+// Function to map a point (x,y) using a homography H
+function mapPoint(x, y, H){
+  const xp = H[0][0]*x + H[0][1]*y + H[0][2];
+  const yp = H[1][0]*x + H[1][1]*y + H[1][2];
+  const wp = H[2][0]*x + H[2][1]*y + H[2][2];
+  return [xp/wp, yp/wp];
+}
+
+// Draw red points on all images
+function drawPoints(x, y, sourceIndex){
+  for(let i=0;i<6;i++){
+    ctxs[i].clearRect(0,0,width,height);
+    ctxs[i].drawImage(images[i],0,0,width,height);
+
+    // Map point if not the source image
+    let mapped = i === sourceIndex ? [x, y] : mapPoint(x, y, homographies[sourceIndex][i]);
+
+    ctxs[i].beginPath();
+    ctxs[i].arc(mapped[0], mapped[1], 5, 0, 2*Math.PI);
+    ctxs[i].fillStyle = 'red';
+    ctxs[i].fill();
+  }
+}
+
+// Add mouse move event listeners
+canvases.forEach((canvas, index) => {
+  canvas.addEventListener('mousemove', e => {
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) * (canvas.width/rect.width);
+    const y = (e.clientY - rect.top) * (canvas.height/rect.height);
+    drawPoints(x, y, index);
+  });
+});
+
+</script>
+</body>
+</html>
