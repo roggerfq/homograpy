@@ -10,11 +10,11 @@ Please visit the following link to see the results of the homography estimation 
 
 ## Homography Computation
 
-The **homography matrix** used in the website is computed in the following **Google Colab notebook**:
+The **homography matrices** used in the website are computed in the following **Google Colab notebook**:
 
 👉 https://colab.research.google.com/drive/1rlNnYn-ySr884uogk5cUjXIeLDwKroQ_?usp=sharing
 
-This notebook computes the homography using feature correspondences obtained with **LoFTR**, and the resulting matrix is then used to visualize the point mapping on the website.
+This notebook computes the homography using feature correspondences obtained with **LoFTR**, and the resulting matrices are then used to visualize the point mapping on the website.
 
 ## Method
 
