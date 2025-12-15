@@ -4,15 +4,23 @@ This repository demonstrates the computation of **homography** between image pai
 
 ## Results
 
-Please visit the following link to see the results of the homography estimation:
+Please visit the following link to see the results of the homography estimation and the visualization of the **mapping of the red point**:
 
 👉 https://roggerfq.github.io/homograpy/
 
+## Homography Computation
+
+The **homography matrix** used in the website is computed in the following **Google Colab notebook**:
+
+👉 https://colab.research.google.com/drive/1rlNnYn-ySr884uogk5cUjXIeLDwKroQ_?usp=sharing
+
+This notebook computes the homography using feature correspondences obtained with **LoFTR**, and the resulting matrix is then used to visualize the point mapping on the website.
+
 ## Method
 
-The homography is computed using feature correspondences obtained with **LoFTR**, a detector-free local feature matching approach based on Transformers.
+The homography is computed using **LoFTR**, a detector-free local feature matching approach based on Transformers.
 
-**Reference paper:**
+## Reference
 
 Sun, J., Shen, Z., Wang, Y., Bao, H., & Zhou, X. (2021).  
 *LoFTR: Detector-Free Local Feature Matching with Transformers.*  
